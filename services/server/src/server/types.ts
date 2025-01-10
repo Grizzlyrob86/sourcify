@@ -1,3 +1,5 @@
+import { Response } from "express";
+
 // Types used internally by the server.
 
 export type MatchLevelWithoutAny = "full_match" | "partial_match";
@@ -30,17 +32,19 @@ export declare interface ContractData {
   partial: string[];
 }
 
+export interface Pagination {
+  currentPage: number;
+  totalPages: number;
+  resultsCurrentPage: number;
+  resultsPerPage: number;
+  totalResults: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 export declare interface PaginatedContractData {
   results: string[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    resultsCurrentPage: number;
-    resultsPerPage: number;
-    totalResults: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
+  pagination: Pagination;
 }
 
 export type RepositoryTag = {
@@ -92,3 +96,7 @@ export type BytesSha = Branded<Buffer, "SHA">;
 export type BytesKeccak = Branded<Buffer, "KECCAK">;
 
 export type BytesTypes = Bytes | BytesKeccak | BytesSha;
+
+export type TypedResponse<T> = Omit<Response, "json" | "status"> & {
+  json(data: T): TypedResponse<T>;
+} & { status(code: number): TypedResponse<T> };
